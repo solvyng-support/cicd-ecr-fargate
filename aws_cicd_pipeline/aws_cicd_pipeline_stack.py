@@ -1,7 +1,14 @@
 from aws_cdk import (
-    core as cdk
-    # aws_sqs as sqs,
+    core as cdk,
+    aws_s3 as s3
 )
+from aws_cdk.pipelines import CodePipeline, CodePipelineSource, ShellStep
+import aws_cdk.aws_codepipeline as codepipeline
+import aws_cdk.aws_codecommit as codecommit
+from aws_cicd_pipeline.codebuild_project import get_cb_project
+from aws_cicd_pipeline.codepipeline_service_role import get_service_role
+from os import path
+import aws_cdk.aws_codepipeline_actions as codepipeline_actions
 
 # For consistency with other languages, `cdk` is the preferred import name for
 # the CDK's core module.  The following line also imports it as `core` for use
@@ -15,10 +22,124 @@ class AwsCicdPipelineStack(cdk.Stack):
     def __init__(self, scope: cdk.Construct, construct_id: str, **kwargs) -> None:
         super().__init__(scope, construct_id, **kwargs)
 
-        # The code that defines your stack goes here
+        repo = codecommit.Repository(
+            self,
+            "Repository",
+            repository_name="MyRepositoryName",
+            code=codecommit.Code.from_directory(path.join(".", "source/"), "master"),
+            description="Some description")
 
-        # example resource
-        # queue = sqs.Queue(
-        #     self, "AwsCicdPipelineQueue",
-        #     visibility_timeout=cdk.Duration.seconds(300),
-        # )
+        codebuild_project = get_cb_project(self, repo)
+
+        codepipeline.CfnPipeline(self, "MyCfnPipeline",
+                                 role_arn=get_service_role(self).attr_arn,
+                                 stages=[
+                                     codepipeline.CfnPipeline.StageDeclarationProperty(
+                                         actions=[codepipeline.CfnPipeline.ActionDeclarationProperty(
+                                             action_type_id=codepipeline.CfnPipeline.ActionTypeIdProperty(
+                                                 category="Source",
+                                                 owner="AWS",
+                                                 provider="CodeCommit",
+                                                 version="0"
+                                             ),
+                                             name="CodeCommit",
+
+                                             # the properties below are optional
+                                             configuration={
+                                                 "BranchName": "master",
+                                                 "RepositoryName": repo.repository_name
+                                             },
+                                             # input_artifacts=[codepipeline.CfnPipeline.InputArtifactProperty(
+                                             #     name="name"
+                                             # )],
+                                             # namespace="namespace",
+                                             output_artifacts=[
+                                                 codepipeline.CfnPipeline.OutputArtifactProperty(
+                                                     name="SourceOutput"
+                                                 )],
+                                             region="eu-west-1",
+                                             # role_arn="roleArn",
+                                             run_order=1
+                                         )],
+                                         name="CodeCommit",
+
+                                         # the properties below are optional
+                                         # blockers=[codepipeline.CfnPipeline.BlockerDeclarationProperty(
+                                         #     name="name",
+                                         #     type="type"
+                                         # )]
+                                     ),
+
+                                     codepipeline.CfnPipeline.StageDeclarationProperty(
+                                         actions=[codepipeline.CfnPipeline.ActionDeclarationProperty(
+                                             action_type_id=codepipeline.CfnPipeline.ActionTypeIdProperty(
+                                                 category="Build",
+                                                 owner="AWS",
+                                                 provider="CodeBuild",
+                                                 version="0"
+                                             ),
+                                             name="CodeCommit",
+
+                                             # the properties below are optional
+                                             configuration={
+                                                 "ProjectName": codebuild_project.name,
+                                             },
+                                             input_artifacts=[codepipeline.CfnPipeline.InputArtifactProperty(
+                                                 name="SourceOutput"
+                                             )],
+                                             # namespace="namespace",
+                                             output_artifacts=[
+                                                 codepipeline.CfnPipeline.OutputArtifactProperty(
+                                                     name="BuildOutput"
+                                                 )],
+                                             region="eu-west-1",
+                                             # role_arn="roleArn",
+                                             run_order=2
+                                         )],
+                                         name="CodeBuild",
+
+                                         # the properties below are optional
+                                         # blockers=[codepipeline.CfnPipeline.BlockerDeclarationProperty(
+                                         #     name="name",
+                                         #     type="type"
+                                         # )]
+                                     ),
+
+                                 ],
+
+                                 # the properties below are optional
+                                 # artifact_store=codepipeline.CfnPipeline.ArtifactStoreProperty(
+                                 #     location="location",
+                                 #     type="type",
+                                 #
+                                 #     # the properties below are optional
+                                 #     encryption_key=codepipeline.CfnPipeline.EncryptionKeyProperty(
+                                 #         id="id",
+                                 #         type="type"
+                                 #     )
+                                 # ),
+                                 # artifact_stores=[codepipeline.CfnPipeline.ArtifactStoreMapProperty(
+                                 #     artifact_store=codepipeline.CfnPipeline.ArtifactStoreProperty(
+                                 #         location="location",
+                                 #         type="type",
+                                 #
+                                 #         # the properties below are optional
+                                 #         encryption_key=codepipeline.CfnPipeline.EncryptionKeyProperty(
+                                 #             id="id",
+                                 #             type="type"
+                                 #         )
+                                 #     ),
+                                 #     region="region"
+                                 # )],
+                                 # disable_inbound_stage_transitions=[
+                                 #     codepipeline.CfnPipeline.StageTransitionProperty(
+                                 #         reason="reason",
+                                 #         stage_name="stageName"
+                                 #     )],
+                                 name="CP-1",
+                                 # restart_execution_on_update=False,
+                                 # tags=[CfnTag(
+                                 #     key="key",
+                                 #     value="value"
+                                 # )]
+                                 )
