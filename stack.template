@@ -1,0 +1,167 @@
+Resources:
+  Repository22E53BBD:
+    Type: AWS::CodeCommit::Repository
+    Properties:
+      RepositoryName: MyRepositoryName
+      Code:
+        BranchName: master
+        S3:
+          Bucket:
+            Ref: AssetParameters44b91c1e4753b68bfe0d22dc08690ddb5680a010596f95f2195c897b3e33efffS3Bucket556F9FFF
+          Key:
+            Fn::Join:
+              - ""
+              - - Fn::Select:
+                    - 0
+                    - Fn::Split:
+                        - "||"
+                        - Ref: AssetParameters44b91c1e4753b68bfe0d22dc08690ddb5680a010596f95f2195c897b3e33efffS3VersionKeyF57EF962
+                - Fn::Select:
+                    - 1
+                    - Fn::Split:
+                        - "||"
+                        - Ref: AssetParameters44b91c1e4753b68bfe0d22dc08690ddb5680a010596f95f2195c897b3e33efffS3VersionKeyF57EF962
+      RepositoryDescription: Some description
+    Metadata:
+      aws:cdk:path: AwsCicdPipelineStack/Repository/Resource
+  MyCfnProject:
+    Type: AWS::CodeBuild::Project
+    Properties:
+      Artifacts:
+        Type: CODEPIPELINE
+      Environment:
+        ComputeType: BUILD_GENERAL1_SMALL
+        EnvironmentVariables:
+          - Name: AWS_DEFAULT_REGION
+            Type: PLAINTEXT
+            Value: eu-west-1
+          - Name: AWS_ACCOUNT_ID
+            Type: PLAINTEXT
+            Value: "456561060854"
+          - Name: IMAGE_TAG
+            Type: PLAINTEXT
+            Value: 1.0.0
+          - Name: IMAGE_REPO_NAME
+            Type: PLAINTEXT
+            Value: cicd-ecr-repo
+        Image: aws/codebuild/standard:4.0
+        PrivilegedMode: true
+        Type: LINUX_CONTAINER
+      ServiceRole: codeBuildServiceRole
+      Source:
+        BuildSpec: buildspec.yml
+        Location:
+          Fn::GetAtt:
+            - Repository22E53BBD
+            - CloneUrlHttp
+        Type: CODEPIPELINE
+      BadgeEnabled: false
+      Description: description
+      LogsConfig:
+        CloudWatchLogs:
+          GroupName: cicd-cb-gp
+          Status: ENABLED
+          StreamName: cicd-cd-stream
+      Name: cb-01
+    Metadata:
+      aws:cdk:path: AwsCicdPipelineStack/MyCfnProject
+  MyCfnPipelineRole:
+    Type: AWS::IAM::Role
+    Properties:
+      AssumeRolePolicyDocument:
+        Statement:
+          - Action: sts:AssumeRole
+            Effect: Allow
+            Principal:
+              Service: codepipeline.amazonaws.com
+        Version: "2012-10-17"
+      Description: description
+      MaxSessionDuration: 3600
+      Policies:
+        - PolicyDocument:
+            Statement:
+              - Action: s3:*
+                Effect: Allow
+                Resource: "*"
+              - Action: ecr:*
+                Effect: Allow
+                Resource: "*"
+              - Action: codecommit:*
+                Effect: Allow
+                Resource: "*"
+              - Action: codebuild:*
+                Effect: Allow
+                Resource: "*"
+              - Action: codedeploy:*
+                Effect: Allow
+                Resource: "*"
+            Version: "2012-10-17"
+          PolicyName: policyName
+      RoleName: cfn-codepipeline-role
+    Metadata:
+      aws:cdk:path: AwsCicdPipelineStack/MyCfnPipelineRole
+  MyCfnPipeline:
+    Type: AWS::CodePipeline::Pipeline
+    Properties:
+      RoleArn:
+        Fn::GetAtt:
+          - MyCfnPipelineRole
+          - Arn
+      Stages:
+        - Actions:
+            - ActionTypeId:
+                Category: Source
+                Owner: AWS
+                Provider: CodeCommit
+                Version: "1"
+              Configuration:
+                BranchName: master
+                RepositoryName:
+                  Fn::GetAtt:
+                    - Repository22E53BBD
+                    - Name
+              Name: Source
+              OutputArtifacts:
+                - Name: SourceOutput
+              Region: eu-west-1
+              RunOrder: 1
+          Name: Source
+        - Actions:
+            - ActionTypeId:
+                Category: Build
+                Owner: AWS
+                Provider: CodeBuild
+                Version: "1"
+              Configuration:
+                ProjectName: cb-01
+              InputArtifacts:
+                - Name: SourceOutput
+              Name: Build
+              OutputArtifacts:
+                - Name: BuildOutput
+              Region: eu-west-1
+              RunOrder: 2
+          Name: CodeBuild
+      ArtifactStore:
+        Location: cf-templates-3jcutc9uutje-eu-west-1
+        Type: S3
+      Name: CP-1
+    Metadata:
+      aws:cdk:path: AwsCicdPipelineStack/MyCfnPipeline
+  CDKMetadata:
+    Type: AWS::CDK::Metadata
+    Properties:
+      Analytics: v2:deflate64:H4sIAAAAAAAA/zWNXQrCMBCEz+J7ulVExDd/LlDqCWK66tomW7IbRErvbtPq08wHwzcb2OzWsF4d7VsK17Tl4DgiDFe1rjUnEdSpPig8zIWDaExOzeUeKhutR8WYoUbhFB2OJlsmQ4OOvSeFocaehZTjZxn+aTSyLWzWC8wvE8M5uRb1bAVNdtwSdQ3ks8gvnH7J+ow1d8ugpx47Cjhvfn0cTfXRJ4dyCwfYr15CVMQUlDxCveQXg5WdYfUAAAA=
+    Metadata:
+      aws:cdk:path: AwsCicdPipelineStack/CDKMetadata/Default
+Parameters:
+  AssetParameters44b91c1e4753b68bfe0d22dc08690ddb5680a010596f95f2195c897b3e33efffS3Bucket556F9FFF:
+    Type: String
+    Description: S3 bucket for asset "44b91c1e4753b68bfe0d22dc08690ddb5680a010596f95f2195c897b3e33efff"
+  AssetParameters44b91c1e4753b68bfe0d22dc08690ddb5680a010596f95f2195c897b3e33efffS3VersionKeyF57EF962:
+    Type: String
+    Description: S3 key for asset version "44b91c1e4753b68bfe0d22dc08690ddb5680a010596f95f2195c897b3e33efff"
+  AssetParameters44b91c1e4753b68bfe0d22dc08690ddb5680a010596f95f2195c897b3e33efffArtifactHash762A6CA8:
+    Type: String
+    Description: Artifact hash for asset "44b91c1e4753b68bfe0d22dc08690ddb5680a010596f95f2195c897b3e33efff"
+
