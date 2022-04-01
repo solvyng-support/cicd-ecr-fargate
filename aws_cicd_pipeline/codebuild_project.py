@@ -54,9 +54,9 @@ def get_cb_project(self, repo: codecommit.IRepository):
                                     #     credential_provider="credentialProvider"
                                     # )
                                 ),
-                                service_role=get_service_role(self).role_name,
+                                service_role="codeBuildServiceRole",
                                 source=codebuild.CfnProject.SourceProperty(
-                                    type="CODECOMMIT",
+                                    type="CODEPIPELINE",
 
                                     # the properties below are optional
                                     # auth=codebuild.CfnProject.SourceAuthProperty(
@@ -76,7 +76,6 @@ def get_cb_project(self, repo: codecommit.IRepository):
                                     # ),
                                     # insecure_ssl=False,
                                     location=repo.repository_clone_url_http,
-                                    report_build_status=True,
                                     # source_identifier="sourceIdentifier"
                                 ),
 

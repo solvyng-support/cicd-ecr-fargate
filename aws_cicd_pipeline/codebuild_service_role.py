@@ -26,21 +26,27 @@ def get_service_role(self):
                        )
 
 
+# def get_assume_role_doc(self):
+#     return iam.PolicyDocument.from_json({
+#         "Version": "2012-10-17",
+#         "Statement": [
+#             {
+#                 "Effect": "Allow",
+#                 "Principal": {
+#                     "Service": "codebuild.amazonaws.com"
+#                 },
+#                 "Action": "sts:AssumeRole"
+#             }
+#         ]
+#     })
+
 def get_assume_role_doc(self):
-    return iam.PolicyDocument.from_json({
-        "Version": "2012-10-17",
-        "Statement": [
-            {
-                "Effect": "Allow",
-                "Principal": {
-                    "Service": [
-                        "codebuild.amazonaws.com"
-                    ]
-                },
-                "Action": "sts:AssumeRole"
-            }
-        ]
-    })
+    return iam.PolicyDocument(
+        statements=[iam.PolicyStatement(
+            actions=["sts:AssumeRole"],
+            principals=[iam.AnyPrincipal()]
+        )]
+    )
 
 
 def get_policy_doc(self):

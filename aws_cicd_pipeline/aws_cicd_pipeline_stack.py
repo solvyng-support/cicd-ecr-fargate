@@ -35,33 +35,34 @@ class AwsCicdPipelineStack(cdk.Stack):
                                  role_arn=get_service_role(self).attr_arn,
                                  stages=[
                                      codepipeline.CfnPipeline.StageDeclarationProperty(
-                                         actions=[codepipeline.CfnPipeline.ActionDeclarationProperty(
-                                             action_type_id=codepipeline.CfnPipeline.ActionTypeIdProperty(
-                                                 category="Source",
-                                                 owner="AWS",
-                                                 provider="CodeCommit",
-                                                 version="0"
-                                             ),
-                                             name="CodeCommit",
+                                         actions=[
+                                             codepipeline.CfnPipeline.ActionDeclarationProperty(
+                                                 action_type_id=codepipeline.CfnPipeline.ActionTypeIdProperty(
+                                                     category="Source",
+                                                     owner="AWS",
+                                                     provider="CodeCommit",
+                                                     version="1"
+                                                 ),
+                                                 name="Source",
 
-                                             # the properties below are optional
-                                             configuration={
-                                                 "BranchName": "master",
-                                                 "RepositoryName": repo.repository_name
-                                             },
-                                             # input_artifacts=[codepipeline.CfnPipeline.InputArtifactProperty(
-                                             #     name="name"
-                                             # )],
-                                             # namespace="namespace",
-                                             output_artifacts=[
-                                                 codepipeline.CfnPipeline.OutputArtifactProperty(
-                                                     name="SourceOutput"
-                                                 )],
-                                             region="eu-west-1",
-                                             # role_arn="roleArn",
-                                             run_order=1
-                                         )],
-                                         name="CodeCommit",
+                                                 # the properties below are optional
+                                                 configuration={
+                                                     "BranchName": "master",
+                                                     "RepositoryName": repo.repository_name
+                                                 },
+                                                 # input_artifacts=[codepipeline.CfnPipeline.InputArtifactProperty(
+                                                 #     name="name"
+                                                 # )],
+                                                 # namespace="namespace",
+                                                 output_artifacts=[
+                                                     codepipeline.CfnPipeline.OutputArtifactProperty(
+                                                         name="SourceOutput"
+                                                     )],
+                                                 region="eu-west-1",
+                                                 # role_arn="roleArn",
+                                                 run_order=1
+                                             )],
+                                         name="Source",
 
                                          # the properties below are optional
                                          # blockers=[codepipeline.CfnPipeline.BlockerDeclarationProperty(
@@ -76,9 +77,9 @@ class AwsCicdPipelineStack(cdk.Stack):
                                                  category="Build",
                                                  owner="AWS",
                                                  provider="CodeBuild",
-                                                 version="0"
+                                                 version="1"
                                              ),
-                                             name="CodeCommit",
+                                             name="Build",
 
                                              # the properties below are optional
                                              configuration={
@@ -108,16 +109,16 @@ class AwsCicdPipelineStack(cdk.Stack):
                                  ],
 
                                  # the properties below are optional
-                                 # artifact_store=codepipeline.CfnPipeline.ArtifactStoreProperty(
-                                 #     location="location",
-                                 #     type="type",
-                                 #
-                                 #     # the properties below are optional
-                                 #     encryption_key=codepipeline.CfnPipeline.EncryptionKeyProperty(
-                                 #         id="id",
-                                 #         type="type"
-                                 #     )
-                                 # ),
+                                 artifact_store=codepipeline.CfnPipeline.ArtifactStoreProperty(
+                                     location="cf-templates-3jcutc9uutje-eu-west-1",
+                                     type="S3",
+
+                                     # the properties below are optional
+                                     # encryption_key=codepipeline.CfnPipeline.EncryptionKeyProperty(
+                                     #     id="id",
+                                     #     type="type"
+                                     # )
+                                 ),
                                  # artifact_stores=[codepipeline.CfnPipeline.ArtifactStoreMapProperty(
                                  #     artifact_store=codepipeline.CfnPipeline.ArtifactStoreProperty(
                                  #         location="location",
