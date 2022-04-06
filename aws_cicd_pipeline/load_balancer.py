@@ -14,7 +14,7 @@ def get_app_LB(self, pipelineSG: ec2.ISecurityGroup, name  ):
    # )],
     name= name,
     #scheme="scheme",
-    security_groups= pipelineSG.security_group_id,
+    security_groups= pipelineSG.unique_id,
     subnet_mappings=[elbv2.CfnLoadBalancer.SubnetMappingProperty(
         subnet_id="subnet-013cf74ac52dd1b6b", 
         # the properties below are optional
