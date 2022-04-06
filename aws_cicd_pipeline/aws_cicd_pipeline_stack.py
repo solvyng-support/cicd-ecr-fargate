@@ -7,7 +7,7 @@ import aws_cdk.aws_codepipeline as codepipeline
 import aws_cdk.aws_codecommit as codecommit
 from aws_cicd_pipeline.codebuild_project import get_cb_project
 from aws_cicd_pipeline.codepipeline_service_role import get_service_role
-from os import path
+from os import name, path
 import aws_cdk.aws_codepipeline_actions as codepipeline_actions
 
 # For consistency with other languages, `cdk` is the preferred import name for
@@ -15,6 +15,9 @@ import aws_cdk.aws_codepipeline_actions as codepipeline_actions
 # with examples from the CDK Developer's Guide, which are in the process of
 # being updated to use `cdk`.  You may delete this import if you don't need it.
 from aws_cdk import core
+from ecr_build import get_ecr_repo
+from load_balancer import get_app_LB, get_LB_Listner, get_pipelineTG 
+from security_group import get_pipelineSG
 
 
 class AwsCicdPipelineStack(cdk.Stack):
@@ -29,7 +32,39 @@ class AwsCicdPipelineStack(cdk.Stack):
             code=codecommit.Code.from_directory(path.join(".", "source/"), "master"),
             description="Some description")
 
-        codebuild_project = get_cb_project(self, repo)
+        ecr_repo = get_ecr_repo(
+            self,
+            name = "Ecr-test"
+        )
+
+
+        pipelineSG = get_pipelineSG(
+            self,
+            name = "pipelineSG"
+        )
+
+        pipelineTG = get_pipelineTG(
+            self,
+            name = "pipelineTG"
+        )
+
+        LB_Listner = get_LB_Listner(
+            self,
+            pipelineTG,
+            name = "LB_Listner"
+        )
+
+
+        app_LB = get_app_LB(
+            self,
+            pipelineSG,
+            pipelineTG,
+            LB_Listner,
+            name = "app_LB",
+            
+        )
+
+        codebuild_project = get_cb_project(self, repo, ecr_repo)
 
         codepipeline.CfnPipeline(self, "MyCfnPipeline",
                                  role_arn=get_service_role(self).attr_arn,
