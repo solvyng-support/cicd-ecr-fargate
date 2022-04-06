@@ -5,7 +5,7 @@ import os
 from aws_cdk.core import Arn
 
 
-def get_app_LB(self, name, pipelineSG: ec2.ISecurityGroup, pipelineTG: elbv2.ITargetGroup, ):
+def get_app_LB(self, pipelineSG: ec2.ISecurityGroup, pipelineTG: elbv2.ITargetGroup, name  ):
     return elbv2.CfnLoadBalancer(self, "MyCfnLoadBalancer",
     ip_address_type="ipv4",
     load_balancer_attributes=[elbv2.CfnLoadBalancer.LoadBalancerAttributeProperty(
