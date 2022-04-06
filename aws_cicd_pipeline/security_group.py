@@ -10,7 +10,7 @@ def get_pipelineSG(self, name):
     #cidr_ipv6="cidrIpv6",
     #description="description",
     from_port= 80,
-    #group_id="groupId",
+    group_id= name,
     group_name= name ,
     #source_prefix_list_id="sourcePrefixListId",
     #source_security_group_id="sourceSecurityGroupId",
