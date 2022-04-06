@@ -10,7 +10,7 @@ def get_app_LB(self, pipelineSG: ec2.ISecurityGroup, pipelineTG: elbv2.ITargetGr
     ip_address_type="ipv4",
     load_balancer_attributes=[elbv2.CfnLoadBalancer.LoadBalancerAttributeProperty(
         key="TargetGroup",
-        value=pipelineTG.target_group_arn,
+        value=pipelineTG.target_group_name,
        
     )],
     name= name,
@@ -65,7 +65,7 @@ def get_pipelineTG(self, name):
         #grpc_code="grpcCode",
         #http_code="httpCode"
     #),
-    name=name,
+    target_group_name=name,
     port=80,
     protocol="tcp",
     protocol_version="HTTP1",
