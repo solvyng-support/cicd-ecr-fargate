@@ -5,7 +5,7 @@ import os
 from aws_cdk.core import Arn
 
 
-def get_app_LB(self, name  ):
+def get_app_LB(self, name ):
     return elbv2.CfnLoadBalancer(self, "MyCfnLoadBalancer",
     ip_address_type="ipv4",
     #load_balancer_attributes=[elbv2.CfnLoadBalancer.LoadBalancerAttributeProperty(
@@ -37,7 +37,7 @@ def get_app_LB(self, name  ):
 
 def get_LB_Listner(self, app_LB: elbv2.ILoadBalancerV2 ):
     return elbv2.CfnListener(self, "MyCfnListener",
-    load_balancer_arn=get_app_LB(self).getattr(id),
+    load_balancer_arn=get_app_LB(self, name ).getattr(id),
     # the properties below are optional
     #alpn_policy=["alpnPolicy"],
     #certificates=[elbv2.CfnListener.CertificateProperty(
