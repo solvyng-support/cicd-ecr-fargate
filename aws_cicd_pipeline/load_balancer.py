@@ -10,7 +10,7 @@ def get_app_LB(self, pipelineSG: ec2.ISecurityGroup, pipelineTG: elbv2.ITargetGr
     ip_address_type="ipv4",
     load_balancer_attributes=[elbv2.CfnLoadBalancer.LoadBalancerAttributeProperty(
         key="TargetGroup",
-        value=pipelineTG.target_group_name,
+        value=pipelineTG.target_group_arn,
        
     )],
     name= name,
