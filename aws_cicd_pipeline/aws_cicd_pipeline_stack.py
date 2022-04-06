@@ -49,7 +49,6 @@ class AwsCicdPipelineStack(cdk.Stack):
 
         app_LB = get_app_LB(
             self,
-            pipelineSG,
             name = "app_LB"  
         )
 
