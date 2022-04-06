@@ -9,8 +9,7 @@ def get_app_LB(self, name, pipelineSG: ec2.ISecurityGroup, pipelineTG: elbv2.ITa
     load_balancer_attributes=[elbv2.CfnLoadBalancer.LoadBalancerAttributeProperty(
         key="TargetGroup",
         value=pipelineTG.target_group_name,
-        key="Listner",
-        value=LB_Listner.listener_arn
+       
     )],
     name= name,
     #scheme="scheme",
