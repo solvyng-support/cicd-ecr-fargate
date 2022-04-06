@@ -24,9 +24,7 @@ AwsCicdPipelineStack(app, "AwsCicdPipelineStack",
                      # and Region that are implied by the current CLI configuration.
 
                      env=core.Environment(account=os.getenv('CDK_DEFAULT_ACCOUNT'),
-                                          region=os.getenv('CDK_DEFAULT_REGION'),
-                                          vpc=os.getenv('CDK_DEFAULT_VPC'),
-                                          subnet=os.getenv('CDK_DEFAULT_SUBNET')),
+                                          region=os.getenv('CDK_DEFAULT_REGION')),
 
                      # Uncomment the next line if you know exactly what Account and Region you
                      # want to deploy the stack to. */

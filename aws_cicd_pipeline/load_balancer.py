@@ -15,14 +15,13 @@ def get_app_LB(self, name, pipelineSG: ec2.ISecurityGroup, pipelineTG: elbv2.ITa
     #scheme="scheme",
     security_groups= pipelineSG.security_group_id,
     subnet_mappings=[elbv2.CfnLoadBalancer.SubnetMappingProperty(
-        subnet_id=os.getenv('CDK_DEFAULT_SUBNET'),
-
+        subnet_id="subnet-013cf74ac52dd1b6b", 
         # the properties below are optional
         #allocation_id="allocationId",
         #i_pv6_address="iPv6Address",
         #private_iPv4_address="privateIPv4Address"
     )],
-    subnets=[os.getenv('CDK_DEFAULT_SUBNET')],
+  
     #tags=[CfnTag(
         #key="key",
         #value="value"
@@ -86,5 +85,5 @@ def get_pipelineTG(self, name):
     #)],
     target_type="ip",
     #unhealthy_threshold_count=123,
-    vpc_id=os.getenv('CDK_DEFAULT_VPC')
+   
 )
