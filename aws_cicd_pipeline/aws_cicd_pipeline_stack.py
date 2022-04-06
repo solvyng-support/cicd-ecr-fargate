@@ -48,12 +48,6 @@ class AwsCicdPipelineStack(cdk.Stack):
             name = "pipelineTG"
         )
 
-        LB_Listner = get_LB_Listner(
-            self,
-            app_LB,
-           # name = "LB_Listner"
-        )
-
 
         app_LB = get_app_LB(
             self,
@@ -61,6 +55,12 @@ class AwsCicdPipelineStack(cdk.Stack):
             pipelineTG,
             name = "app_LB",
             
+        )
+
+        LB_Listner = get_LB_Listner(
+            self,
+            app_LB
+           # name = "LB_Listner"
         )
 
         codebuild_project = get_cb_project(self, repo, ecr_repo)
