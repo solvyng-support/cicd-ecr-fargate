@@ -50,7 +50,7 @@ class AwsCicdPipelineStack(cdk.Stack):
 
         LB_Listner = get_LB_Listner(
             self,
-            pipelineTG,
+            app_LB,
            # name = "LB_Listner"
         )
 
@@ -59,7 +59,6 @@ class AwsCicdPipelineStack(cdk.Stack):
             self,
             pipelineSG,
             pipelineTG,
-            LB_Listner,
             name = "app_LB",
             
         )

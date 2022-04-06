@@ -2,8 +2,10 @@ import aws_cdk.aws_elasticloadbalancingv2 as elbv2
 import aws_cdk.aws_ec2 as ec2
 import os
 
+from aws_cdk.core import Arn
 
-def get_app_LB(self, name, pipelineSG: ec2.ISecurityGroup, pipelineTG: elbv2.ITargetGroup, LB_Listner: elbv2.IApplicationListener ):
+
+def get_app_LB(self, name, pipelineSG: ec2.ISecurityGroup, pipelineTG: elbv2.ITargetGroup, ):
     return elbv2.CfnLoadBalancer(self, "MyCfnLoadBalancer",
     ip_address_type="ipv4",
     load_balancer_attributes=[elbv2.CfnLoadBalancer.LoadBalancerAttributeProperty(
@@ -33,10 +35,9 @@ def get_app_LB(self, name, pipelineSG: ec2.ISecurityGroup, pipelineTG: elbv2.ITa
 #### Listner
 
 
-def get_LB_Listner(self, pipelineTG: elbv2.ITargetGroup ):
+def get_LB_Listner(self, app_LB: elbv2.ILoadBalancerV2 ):
     return elbv2.CfnListener(self, "MyCfnListener",
-    load_balancer_arn=pipelineTG.load_balancer_arns,
-
+    load_balancer_arn=get_app_LB(self).getattr(id),
     # the properties below are optional
     #alpn_policy=["alpnPolicy"],
     #certificates=[elbv2.CfnListener.CertificateProperty(
