@@ -16,7 +16,7 @@ import aws_cdk.aws_codepipeline_actions as codepipeline_actions
 # being updated to use `cdk`.  You may delete this import if you don't need it.
 from aws_cdk import core
 from aws_cicd_pipeline.ecr_build import get_ecr_repo
-from aws_cicd_pipeline.load_balancer import get_app_LB, get_LB_Listner, get_pipelineTG
+from aws_cicd_pipeline.load_balancer import get_LB_Listner_Rule, get_app_LB, get_LB_Listner, get_pipelineTG
 from aws_cicd_pipeline.security_group import get_pipelineSG
 
 
@@ -37,7 +37,6 @@ class AwsCicdPipelineStack(cdk.Stack):
             name = "Ecr-test"
         )
 
-
         pipelineSG = get_pipelineSG(
             self,
             name = "pipelineSG"
@@ -47,7 +46,6 @@ class AwsCicdPipelineStack(cdk.Stack):
             self,
             name = "pipelineTG"
         )
-
 
         app_LB = get_app_LB(
             self,
@@ -60,6 +58,12 @@ class AwsCicdPipelineStack(cdk.Stack):
             self,
             app_LB
            # name = "LB_Listner"
+        )
+
+        LB_Listner_Rule = get_LB_Listner_Rule(
+            self,
+            pipelineTG,
+            LB_Listner
         )
 
         codebuild_project = get_cb_project(self, repo, ecr_repo)
