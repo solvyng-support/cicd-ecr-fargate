@@ -10,9 +10,6 @@ def get_app_lb(self, name):
                                  ip_address_type="ipv4",
                                  name=name,
                                  security_groups=[get_security_group(self, "ALB-SecurityGroup")],
-                                 subnet_mappings=[elbv2.CfnLoadBalancer.SubnetMappingProperty(
-                                     subnet_id="subnet-013cf74ac52dd1b6b",
-                                 )],
                                  type="application"
                                  )
 

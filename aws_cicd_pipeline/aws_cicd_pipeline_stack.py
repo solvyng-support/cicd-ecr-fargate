@@ -16,8 +16,8 @@ import aws_cdk.aws_codepipeline_actions as codepipeline_actions
 # being updated to use `cdk`.  You may delete this import if you don't need it.
 from aws_cdk import core
 from aws_cicd_pipeline.ecr_build import get_ecr_repo
-from aws_cicd_pipeline.load_balancer import get_LB_Listner_Rule, get_app_LB, get_LB_Listner, get_pipelineTG
-from aws_cicd_pipeline.security_group import get_pipelineSG
+from aws_cicd_pipeline.load_balancer import get_lb_listener_rule, get_app_lb, get_lb_listener, get_pipeline_tg
+from aws_cicd_pipeline.security_group import get_pipeline_sg
 
 
 class AwsCicdPipelineStack(cdk.Stack):
@@ -28,7 +28,7 @@ class AwsCicdPipelineStack(cdk.Stack):
         repo = codecommit.Repository(
             self,
             "Repository",
-            repository_name="MyRepositoryName",
+            repository_name="CodeCommitRepo",
             code=codecommit.Code.from_directory(path.join(".", "source/"), "master"),
             description="Some description")
 
@@ -37,31 +37,30 @@ class AwsCicdPipelineStack(cdk.Stack):
             name = "Ecr-test"
         )
 
-        pipelineSG = get_pipelineSG(
+        pipeline_sg = get_pipeline_sg(
             self,
-            name = "pipelineSG"
+            name = "ALB-SecurityGroup"
         )
 
-        pipelineTG = get_pipelineTG(
+        pipeline_tg = get_pipeline_tg(
             self,
-            name = "pipelineTG"
+            name = "pipeline_tg"
         )
 
-        app_LB = get_app_LB(
+        app_lb = get_app_lb(
             self,
             name = "app_LB"  
         )
 
-        LB_Listner = get_LB_Listner(
+        lb_Listner = get_lb_listener(
             self,
-            app_LB
-           # name = "LB_Listner"
+            app_lb
         )
 
-        LB_Listner_Rule = get_LB_Listner_Rule(
+        lb_listner_rule = get_lb_listener_rule(
             self,
-            pipelineTG,
-            LB_Listner
+            pipeline_tg,
+            lb_Listner
         )
 
         codebuild_project = get_cb_project(self, repo, ecr_repo)
