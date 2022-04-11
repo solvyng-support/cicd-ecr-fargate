@@ -16,7 +16,7 @@ import aws_cdk.aws_codepipeline_actions as codepipeline_actions
 # being updated to use `cdk`.  You may delete this import if you don't need it.
 from aws_cdk import core
 from aws_cicd_pipeline.ecr_build import get_ecr_repo
-from aws_cicd_pipeline.load_balancer import get_lb_listener, get_app_lb, get_lb_listener_rule, get_pipeline_tg
+from aws_cicd_pipeline.load_balancer import get_lb_listener_rule, get_app_lb, get_lb_listener, get_pipeline_tg
 from aws_cicd_pipeline.security_group import get_pipeline_sg
 
 
@@ -28,40 +28,39 @@ class AwsCicdPipelineStack(cdk.Stack):
         repo = codecommit.Repository(
             self,
             "Repository",
-            repository_name="MyRepositoryName",
+            repository_name="CodeCommitRepo",
             code=codecommit.Code.from_directory(path.join(".", "source/"), "master"),
             description="Some description")
 
         ecr_repo = get_ecr_repo(
             self,
-            name="Ecr-test"
+            name = "Ecr-test"
         )
 
         pipeline_sg = get_pipeline_sg(
             self,
-            name="pipelineSG"
+            name = "ALB-SecurityGroup"
         )
 
         pipeline_tg = get_pipeline_tg(
             self,
-            name="pipelineTG"
+            name = "pipeline_tg"
         )
 
-        alb = get_app_lb(
+        app_lb = get_app_lb(
             self,
-            name="App-LB"
+            name = "app_LB"  
         )
 
-        LB_Listner = get_LB_Listner(
+        lb_Listner = get_lb_listener(
             self,
-            app_LB
-            # name = "LB_Listner"
+            app_lb
         )
 
-        LB_Listner_Rule = get_LB_Listner_Rule(
+        lb_listner_rule = get_lb_listener_rule(
             self,
-            pipelineTG,
-            LB_Listner
+            pipeline_tg,
+            lb_Listner
         )
 
         codebuild_project = get_cb_project(self, repo, ecr_repo)
@@ -79,18 +78,31 @@ class AwsCicdPipelineStack(cdk.Stack):
                                                      version="1"
                                                  ),
                                                  name="Source",
+
+                                                 # the properties below are optional
                                                  configuration={
                                                      "BranchName": "master",
                                                      "RepositoryName": repo.repository_name
                                                  },
+                                                 # input_artifacts=[codepipeline.CfnPipeline.InputArtifactProperty(
+                                                 #     name="name"
+                                                 # )],
+                                                 # namespace="namespace",
                                                  output_artifacts=[
                                                      codepipeline.CfnPipeline.OutputArtifactProperty(
                                                          name="SourceOutput"
                                                      )],
                                                  region="eu-west-1",
+                                                 # role_arn="roleArn",
                                                  run_order=1
                                              )],
                                          name="Source",
+
+                                         # the properties below are optional
+                                         # blockers=[codepipeline.CfnPipeline.BlockerDeclarationProperty(
+                                         #     name="name",
+                                         #     type="type"
+                                         # )]
                                      ),
 
                                      codepipeline.CfnPipeline.StageDeclarationProperty(
@@ -102,26 +114,67 @@ class AwsCicdPipelineStack(cdk.Stack):
                                                  version="1"
                                              ),
                                              name="Build",
+
+                                             # the properties below are optional
                                              configuration={
                                                  "ProjectName": codebuild_project.name,
                                              },
                                              input_artifacts=[codepipeline.CfnPipeline.InputArtifactProperty(
                                                  name="SourceOutput"
                                              )],
+                                             # namespace="namespace",
                                              output_artifacts=[
                                                  codepipeline.CfnPipeline.OutputArtifactProperty(
                                                      name="BuildOutput"
                                                  )],
                                              region="eu-west-1",
+                                             # role_arn="roleArn",
                                              run_order=2
                                          )],
                                          name="CodeBuild",
+
+                                         # the properties below are optional
+                                         # blockers=[codepipeline.CfnPipeline.BlockerDeclarationProperty(
+                                         #     name="name",
+                                         #     type="type"
+                                         # )]
                                      ),
 
                                  ],
+
+                                 # the properties below are optional
                                  artifact_store=codepipeline.CfnPipeline.ArtifactStoreProperty(
                                      location="cf-templates-3jcutc9uutje-eu-west-1",
                                      type="S3",
+
+                                     # the properties below are optional
+                                     # encryption_key=codepipeline.CfnPipeline.EncryptionKeyProperty(
+                                     #     id="id",
+                                     #     type="type"
+                                     # )
                                  ),
+                                 # artifact_stores=[codepipeline.CfnPipeline.ArtifactStoreMapProperty(
+                                 #     artifact_store=codepipeline.CfnPipeline.ArtifactStoreProperty(
+                                 #         location="location",
+                                 #         type="type",
+                                 #
+                                 #         # the properties below are optional
+                                 #         encryption_key=codepipeline.CfnPipeline.EncryptionKeyProperty(
+                                 #             id="id",
+                                 #             type="type"
+                                 #         )
+                                 #     ),
+                                 #     region="region"
+                                 # )],
+                                 # disable_inbound_stage_transitions=[
+                                 #     codepipeline.CfnPipeline.StageTransitionProperty(
+                                 #         reason="reason",
+                                 #         stage_name="stageName"
+                                 #     )],
                                  name="CP-1",
+                                 # restart_execution_on_update=False,
+                                 # tags=[CfnTag(
+                                 #     key="key",
+                                 #     value="value"
+                                 # )]
                                  )
