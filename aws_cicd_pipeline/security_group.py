@@ -6,6 +6,6 @@ def get_pipeline_sg(self, name):
                                        ip_protocol="tcp",
                                        cidr_ip="0.0.0.0/0",
                                        from_port=80,
-                                       group_name=name,
+                                       group_name="ALB-SecurityGroup",
                                        to_port=80
                                        )

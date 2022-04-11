@@ -39,7 +39,7 @@ class AwsCicdPipelineStack(cdk.Stack):
 
         pipeline_sg = get_pipeline_sg(
             self,
-            name = "pipeline_sg"
+            name = "ALB-SecurityGroup"
         )
 
         pipeline_tg = get_pipeline_tg(
