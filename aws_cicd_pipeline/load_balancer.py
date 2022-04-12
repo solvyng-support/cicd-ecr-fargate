@@ -45,5 +45,6 @@ def get_lb_listener_rule(self, pipeline_tg: elbv2.CfnTargetGroup, alb_listener: 
                                      ),
                                  )],
                                  listener_arn=alb_listener.attr_listener_arn,
-                                 priority=1
+                                 priority=1,
+                                 conditions=[elbv2.CfnListenerRule.RuleConditionProperty(http_request_method_config=elbv2.CfnListenerRule.HttpRequestMethodConfigProperty(values=["GET"]))]
                                  )
