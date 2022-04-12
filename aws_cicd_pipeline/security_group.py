@@ -1,7 +1,7 @@
 import aws_cdk.aws_ec2 as ec2
 
 
-def get_pipeline_sg(self, name):
+def get_pipeline_sg(self, name) -> ec2.SecurityGroup :
     return ec2.CfnSecurityGroupIngress(self, "CfnSecurityGroup",
                                        ip_protocol="tcp",
                                        cidr_ip="0.0.0.0/0",
