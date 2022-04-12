@@ -1,15 +1,14 @@
-from aws_cicd_pipeline.security_group import get_pipeline_sg
 from aws_cdk.core import Arn
 import aws_cdk.aws_elasticloadbalancingv2 as elbv2
 import aws_cdk.aws_ec2 as ec2
 import os
 
 
-def get_app_lb(self, name):
+def get_app_lb(self, name: str,  security_group: ec2.SecurityGroup):
     return elbv2.CfnLoadBalancer(self, "CfnLoadBalancer",
                                  ip_address_type="ipv4",
                                  name=name,
-                                 security_groups=[get_pipeline_sg(self, "ALB-SecurityGroup")],
+                                 security_groups=[security_group.security_group_id],
                                  type="application"
                                  )
 
