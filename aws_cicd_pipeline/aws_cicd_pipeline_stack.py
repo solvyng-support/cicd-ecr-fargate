@@ -12,7 +12,7 @@ import aws_cdk.aws_codepipeline_actions as codepipeline_actions
 from aws_cdk import core
 from aws_cicd_pipeline.ecr_build import get_ecr_repo
 from aws_cicd_pipeline.load_balancer import get_lb_listener_rule, get_app_lb, get_lb_listener, get_pipeline_tg
-from aws_cicd_pipeline.security_group import get_securitygroup
+from aws_cicd_pipeline.security_group import get_security_group
 
 
 class AwsCicdPipelineStack(cdk.Stack):
@@ -31,33 +31,33 @@ class AwsCicdPipelineStack(cdk.Stack):
             self,
             name = "Ecr-test"
         )
-
-        pipeline_sg = get_securitygroup(
-            self,
-            name = "Pipeline-SecurityGroup"
-        )
-
-        pipeline_tg = get_pipeline_tg(
-            self,
-            name = "pipeline_tg"
-        )
-
-        app_lb = get_app_lb(
-            self,
-            name = "app_LB",
-            security_group=pipeline_sg
-        )
-
-        lb_Listner = get_lb_listener(
-            self,
-            app_lb
-        )
-
-        lb_listner_rule = get_lb_listener_rule(
-            self,
-            pipeline_tg,
-            lb_Listner
-        )
+        #
+        # pipeline_sg = get_security_group(
+        #     self,
+        #     name = "Pipeline-SecurityGroup"
+        # )
+        #
+        # pipeline_tg = get_pipeline_tg(
+        #     self,
+        #     name = "pipeline_tg"
+        # )
+        #
+        # app_lb = get_app_lb(
+        #     self,
+        #     name = "app_LB",
+        #     security_group=pipeline_sg
+        # )
+        #
+        # lb_Listner = get_lb_listener(
+        #     self,
+        #     app_lb
+        # )
+        #
+        # lb_listner_rule = get_lb_listener_rule(
+        #     self,
+        #     pipeline_tg,
+        #     lb_Listner
+        # )
 
         codebuild_project = get_cb_project(self, repo, ecr_repo)
 
