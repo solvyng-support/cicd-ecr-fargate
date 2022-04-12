@@ -11,3 +11,4 @@ __pycache__
 cdk.out
 
 .idea
+node_modules
