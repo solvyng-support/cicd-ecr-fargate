@@ -17,7 +17,7 @@ import aws_cdk.aws_codepipeline_actions as codepipeline_actions
 from aws_cdk import core
 from aws_cicd_pipeline.ecr_build import get_ecr_repo
 from aws_cicd_pipeline.load_balancer import get_lb_listener_rule, get_app_lb, get_lb_listener, get_pipeline_tg
-from aws_cicd_pipeline.security_group import get_pipeline_sg
+from aws_cicd_pipeline.security_group import get_securitygroup
 
 
 class AwsCicdPipelineStack(cdk.Stack):
@@ -37,7 +37,7 @@ class AwsCicdPipelineStack(cdk.Stack):
             name = "Ecr-test"
         )
 
-        pipeline_sg = get_pipeline_sg(
+        pipeline_sg = get_securitygroup(
             self,
             name = "Pipeline-SecurityGroup"
         )
