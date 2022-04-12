@@ -18,6 +18,7 @@ def get_lb_listener(self, alb: elbv2.CfnLoadBalancer):
                              load_balancer_arn=alb.attr_load_balancer_full_name,
                              port=80,
                              protocol="tcp",
+                             default_actions=[elbv2.CfnListener.ActionProperty(type="forward")]
                              )
 
 
