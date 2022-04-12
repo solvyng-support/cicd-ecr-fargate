@@ -6,7 +6,7 @@ from aws_cicd_pipeline.codebuild_service_role import get_service_role
 
 
 def get_cb_project(self, repo: codecommit.IRepository, ecr_repo: ecr.IRepository):
-    return codebuild.CfnProject(self, "MyCfnProject",
+    return codebuild.CfnProject(self, "CfnProject",
                                 artifacts=codebuild.CfnProject.ArtifactsProperty(
                                     type="CODEPIPELINE",
 

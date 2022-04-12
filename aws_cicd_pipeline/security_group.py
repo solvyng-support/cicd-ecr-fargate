@@ -2,7 +2,7 @@ import aws_cdk.aws_ec2 as ec2
 
 
 def get_securitygroup(self, name) -> ec2.CfnSecurityGroup:
-    return ec2.CfnSecurityGroup(self, "MyCfnSecurityGroup",
+    return ec2.CfnSecurityGroup(self, "CfnSecurityGroup",
                                 group_description="groupDescription", 
                                 security_group_ingress=get_ingress(self, name) )
 

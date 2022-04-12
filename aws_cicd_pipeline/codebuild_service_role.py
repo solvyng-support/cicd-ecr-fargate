@@ -5,7 +5,7 @@ import aws_cdk.aws_iam as iam
 # policy_document: Any
 
 def get_service_role(self):
-    return iam.CfnRole(self, "MyCfnCodeBuildRole",
+    return iam.CfnRole(self, "CfnCodeBuildRole",
                        assume_role_policy_document=get_assume_role_doc(self),
 
                        # the properties below are optional

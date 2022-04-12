@@ -2,7 +2,7 @@ Resources:
   Repository22E53BBD:
     Type: AWS::CodeCommit::Repository
     Properties:
-      RepositoryName: MyRepositoryName
+      RepositoryName: RepositoryName
       Code:
         BranchName: master
         S3:
@@ -24,7 +24,7 @@ Resources:
       RepositoryDescription: Some description
     Metadata:
       aws:cdk:path: AwsCicdPipelineStack/Repository/Resource
-  MyCfnProject:
+  CfnProject:
     Type: AWS::CodeBuild::Project
     Properties:
       Artifacts:
@@ -64,8 +64,8 @@ Resources:
           StreamName: cicd-cd-stream
       Name: cb-01
     Metadata:
-      aws:cdk:path: AwsCicdPipelineStack/MyCfnProject
-  MyCfnPipelineRole:
+      aws:cdk:path: AwsCicdPipelineStack/CfnProject
+  CfnPipelineRole:
     Type: AWS::IAM::Role
     Properties:
       AssumeRolePolicyDocument:
@@ -99,13 +99,13 @@ Resources:
           PolicyName: policyName
       RoleName: cfn-codepipeline-role
     Metadata:
-      aws:cdk:path: AwsCicdPipelineStack/MyCfnPipelineRole
-  MyCfnPipeline:
+      aws:cdk:path: AwsCicdPipelineStack/CfnPipelineRole
+  CfnPipeline:
     Type: AWS::CodePipeline::Pipeline
     Properties:
       RoleArn:
         Fn::GetAtt:
-          - MyCfnPipelineRole
+          - CfnPipelineRole
           - Arn
       Stages:
         - Actions:
@@ -147,7 +147,7 @@ Resources:
         Type: S3
       Name: CP-1
     Metadata:
-      aws:cdk:path: AwsCicdPipelineStack/MyCfnPipeline
+      aws:cdk:path: AwsCicdPipelineStack/CfnPipeline
   CDKMetadata:
     Type: AWS::CDK::Metadata
     Properties:

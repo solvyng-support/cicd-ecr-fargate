@@ -66,7 +66,7 @@ class AwsCicdPipelineStack(cdk.Stack):
 
         codebuild_project = get_cb_project(self, repo, ecr_repo)
 
-        codepipeline.CfnPipeline(self, "MyCfnPipeline",
+        codepipeline.CfnPipeline(self, "CfnPipeline",
                                  role_arn=get_service_role(self).attr_arn,
                                  stages=[
                                      codepipeline.CfnPipeline.StageDeclarationProperty(
