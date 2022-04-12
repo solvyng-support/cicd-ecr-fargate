@@ -4,11 +4,11 @@ import aws_cdk.aws_ec2 as ec2
 import os
 
 
-def get_app_lb(self, name: str,  security_group: ec2.SecurityGroup):
+def get_app_lb(self, name: str,  security_group: ec2.CfnSecurityGroup):
     return elbv2.CfnLoadBalancer(self, "CfnLoadBalancer",
                                  ip_address_type="ipv4",
                                  name=name,
-                                 security_groups=[security_group.security_group_id],
+                                 security_groups=[security_group.attr_group_id],
                                  type="application"
                                  )
 
