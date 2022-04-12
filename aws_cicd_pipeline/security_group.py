@@ -7,7 +7,7 @@ def get_securitygroup(self, name) -> ec2.CfnSecurityGroup:
                                 security_group_ingress=get_ingress(self, name) )
 
 def get_ingress(self, name) -> ec2.CfnSecurityGroupIngress:
-    return ec2.CfnSecurityGroupIngress(self, "CfnSecurityGroup",
+    return ec2.CfnSecurityGroupIngress(self, "CfnSecurityGroupIngress",
                                        ip_protocol="tcp",
                                        cidr_ip="0.0.0.0/0",
                                        from_port=80,
