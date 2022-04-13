@@ -62,11 +62,12 @@ def get_cd_service(self, cluster_fargate:ecs.CfnCluster, get_app_lb:elbv2.CfnLoa
         )],
         network_configuration=ecs.CfnService.NetworkConfigurationProperty(
             awsvpc_configuration=ecs.CfnService.AwsVpcConfigurationProperty(
+                subnets="",
                 assign_public_ip="ENABLED",
             )
         ),
-        role="role",
-        service_name="arn:aws:iam::456561060854:role/taskExecutionRole",
+        role="arn:aws:iam::456561060854:role/taskExecutionRole",
+        service_name="ecs_service",
         task_definition=task_defination.attr_task_definition_arn
     )
 
