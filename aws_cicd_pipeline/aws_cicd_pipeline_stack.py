@@ -64,9 +64,9 @@ class AwsCicdPipelineStack(cdk.Stack):
 
         ecs_cluster = cluster_fargate(self)
 
-        ecs_service = get_cd_service(self, ecs_cluster, app_lb, pipeline_tg, ecs_taskd)
-
         ecs_taskd = task_defination(self, ecr_repo)
+
+        ecs_service = get_cd_service(self, ecs_cluster, app_lb, pipeline_tg, ecs_taskd)
 
         codebuild_project = get_cb_project(self, repo, ecr_repo)
 
