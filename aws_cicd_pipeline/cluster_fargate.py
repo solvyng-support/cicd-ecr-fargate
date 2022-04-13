@@ -5,9 +5,10 @@ from multiprocessing.dummy.connection import Listener
 import aws_cdk.aws_ecs as ecs
 import aws_cdk.aws_ecr as ecr
 import aws_cdk.aws_elasticloadbalancingv2 as elbv2
+from aws_cicd_pipeline.load_balancer import get_app_lb, get_pipeline_tg
 
 
-def cluster_fargete(self):
+def cluster_fargate(self):
     return ecs.CfnCluster(self, "MyCfnCluster",
         capacity_providers=["FARGATE"],
         cluster_name="allthecatapps",
@@ -15,8 +16,8 @@ def cluster_fargete(self):
     )
     
     #Task Defination
-def fargate_service(self, task_d: ecs.TaskDefinition, cluster_f: ecs.CfnCluster, alb: elbv2.CfnLoadBalancer, alb_listener: elbv2.CfnListener ):
-    return ecs.FargateService(self, "Service", cluster=cluster_f, task_definition=task_d, lb=alb, lb_listener=alb_listener)
+#def fargate_service(self, task_d: ecs.TaskDefinition, cluster_f: ecs.CfnCluster, alb: elbv2.CfnLoadBalancer, alb_listener: elbv2.CfnListener ):
+   # return ecs.FargateService(self, "Service", cluster=cluster_f, task_definition=task_d, lb=alb, lb_listener=alb_listener)
 
 
 def task_defination(self, ecr: ecr.Repository):    
@@ -38,5 +39,34 @@ def task_defination(self, ecr: ecr.Repository):
         memory="1024",
     
 )
+
+def get_cd_service(self, cluster_fargate:ecs.CfnCluster, get_app_lb:elbv2.CfnLoadBalancer, get_pipeline_tg:elbv2.CfnTargetGroup, task_defination:ecs.CfnTaskDefinition):
+    return ecs.CfnService(self, "MyCfnService",
+        capacity_provider_strategy=[ecs.CfnService.CapacityProviderStrategyItemProperty(
+            base=1,
+            capacity_provider="FARGATE",
+            weight=1
+        )],
+        cluster=cluster_fargate.attr_arn,
+        deployment_controller=ecs.CfnService.DeploymentControllerProperty(
+            type="ECS"
+        ),
+        desired_count=2,
+        launch_type="FARGATE",
+        load_balancers=[ecs.CfnService.LoadBalancerProperty(
+            container_port=80,
+            container_name="catpipeline",
+            load_balancer_name=get_app_lb.attr_load_balancer_name,
+            target_group_arn=get_pipeline_tg.attr_target_group_full_name
+        )],
+        network_configuration=ecs.CfnService.NetworkConfigurationProperty(
+            awsvpc_configuration=ecs.CfnService.AwsVpcConfigurationProperty(
+                assign_public_ip="ENABLED",
+            )
+        ),
+        role="role",
+        service_name="arn:aws:iam::456561060854:role/taskExecutionRole",
+        task_definition=task_defination.attr_task_definition_arn
+    )
 
  

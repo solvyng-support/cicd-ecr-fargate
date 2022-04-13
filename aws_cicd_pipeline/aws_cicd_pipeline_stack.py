@@ -13,6 +13,9 @@ from aws_cdk import core
 from aws_cicd_pipeline.ecr_build import get_ecr_repo
 from aws_cicd_pipeline.load_balancer import get_lb_listener_rule, get_app_lb, get_lb_listener, get_pipeline_tg
 from aws_cicd_pipeline.security_group import get_security_group
+from aws_cicd_pipeline.cluster_fargate import get_cd_service, cluster_fargate, task_defination
+from aws_cicd_pipeline.codedeploy import get_codedeploy
+
 
 
 class AwsCicdPipelineStack(cdk.Stack):
@@ -29,24 +32,24 @@ class AwsCicdPipelineStack(cdk.Stack):
 
         ecr_repo = get_ecr_repo(
             self,
-            name = "Ecr-test"
+            name = "ecr-test"
         )
         #
-        # pipeline_sg = get_security_group(
-        #     self,
-        #     name = "Pipeline-SecurityGroup"
-        # )
+        pipeline_sg = get_security_group(
+            self,
+             name = "Pipeline-SecurityGroup"
+        )
+        
+        pipeline_tg = get_pipeline_tg(
+             self,
+            name = "pipeline_tg"
+         )
         #
-        # pipeline_tg = get_pipeline_tg(
-        #     self,
-        #     name = "pipeline_tg"
-        # )
-        #
-        # app_lb = get_app_lb(
-        #     self,
-        #     name = "app_LB",
-        #     security_group=pipeline_sg
-        # )
+        app_lb = get_app_lb(
+             self,
+            name = "app_LB",
+            security_group=pipeline_sg
+         )
         #
         # lb_Listner = get_lb_listener(
         #     self,
@@ -59,7 +62,15 @@ class AwsCicdPipelineStack(cdk.Stack):
         #     lb_Listner
         # )
 
+        ecs_cluster = cluster_fargate(self)
+
+        ecs_service = get_cd_service(self, ecs_cluster, app_lb, pipeline_tg, ecs_taskd)
+
+        ecs_taskd = task_defination(self, ecr_repo)
+
         codebuild_project = get_cb_project(self, repo, ecr_repo)
+
+        codeDeploy = get_codedeploy(self)
 
         codepipeline.CfnPipeline(self, "CfnPipeline",
                                  role_arn=get_service_role(self).attr_arn,
@@ -112,6 +123,31 @@ class AwsCicdPipelineStack(cdk.Stack):
                                          )],
                                          name="CodeBuild",
                                      ),
+
+                                     codepipeline.CfnPipeline.StageDeclarationProperty(
+                                         actions=[codepipeline.CfnPipeline.ActionDeclarationProperty(
+                                             action_type_id=codepipeline.CfnPipeline.ActionTypeIdProperty(
+                                                 category="Deploy",
+                                                 owner="AWS",
+                                                 provider="Amazon ECS",
+                                                 version="1"
+                                             ),
+                                             name="Deploy",
+                                             configuration={
+                                                 "CodeDeployName": codeDeploy.application_name,
+                                                 "Cluster Name": ecs_cluster.cluster_name,
+                                                 "Service Name":ecs_service.service_name,
+                                                 #"Image Definitions file": imagedefinitions.json,
+                                             },
+                                             input_artifacts=[codepipeline.CfnPipeline.InputArtifactProperty(
+                                                 name="Build Artifact"
+                                             )],
+                                             region="eu-west-1",
+                                             run_order=3
+                                         )],
+                                         name="Deploy",
+                                     ),
+                                     
 
                                  ],
                                  artifact_store=codepipeline.CfnPipeline.ArtifactStoreProperty(

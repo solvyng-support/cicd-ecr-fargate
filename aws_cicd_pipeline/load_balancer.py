@@ -1,4 +1,4 @@
-from aws_cdk.core import Arn
+#from aws_cdk.core import Arn
 import aws_cdk.aws_elasticloadbalancingv2 as elbv2
 import aws_cdk.aws_ec2 as ec2
 import os
