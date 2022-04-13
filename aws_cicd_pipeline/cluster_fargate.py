@@ -34,7 +34,7 @@ def task_defination(self, get_ecr_repo:ecr.CfnRepository):
             )],
         )],
         cpu="0.5vCPU",
-        name="catpipelinedemo",
+        #name="catpipelinedemo",
         execution_role_arn="arn:aws:iam::456561060854:role/taskExecutionRole",
         family="linux",
         memory="1024",
