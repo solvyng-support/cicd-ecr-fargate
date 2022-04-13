@@ -60,12 +60,12 @@ def get_cd_service(self, cluster_fargate:ecs.CfnCluster, get_app_lb:elbv2.CfnLoa
             load_balancer_name=get_app_lb.attr_load_balancer_name,
             target_group_arn=get_pipeline_tg.attr_target_group_full_name
         )],
-        network_configuration=ecs.CfnService.NetworkConfigurationProperty(
-            awsvpc_configuration=ecs.CfnService.AwsVpcConfigurationProperty(
-                subnets="",
-                assign_public_ip="ENABLED",
-            )
-        ),
+        #network_configuration=ecs.CfnService.NetworkConfigurationProperty(
+          #  awsvpc_configuration=ecs.CfnService.AwsVpcConfigurationProperty(
+           #     subnets="",
+           #     assign_public_ip="ENABLED",
+           # )
+        #),
         role="arn:aws:iam::456561060854:role/taskExecutionRole",
         service_name="ecs_service",
         task_definition=task_defination.attr_task_definition_arn
