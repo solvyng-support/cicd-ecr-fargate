@@ -42,7 +42,7 @@ def task_defination(self, get_ecr_repo:ecr.CfnRepository):
 )
 
 def get_cd_service(self, cluster_fargate:ecs.CfnCluster, get_app_lb:elbv2.CfnLoadBalancer, get_pipeline_tg:elbv2.CfnTargetGroup, task_defination:ecs.CfnTaskDefinition):
-    return ecs.CfnService(self, "MyCfnService",
+    return ecs.CfnService(self, "CfnService",
         capacity_provider_strategy=[ecs.CfnService.CapacityProviderStrategyItemProperty(
             base=1,
             capacity_provider="FARGATE",

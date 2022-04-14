@@ -14,7 +14,7 @@ from aws_cicd_pipeline.ecr_build import get_ecr_repo
 from aws_cicd_pipeline.load_balancer import get_lb_listener_rule, get_app_lb, get_lb_listener, get_pipeline_tg
 from aws_cicd_pipeline.security_group import get_security_group
 from aws_cicd_pipeline.cluster_fargate import get_cd_service, cluster_fargate, task_defination
-from aws_cicd_pipeline.codedeploy import get_codedeploy
+from aws_cicd_pipeline.codedeploy import get_codedeploy, cd_deployment_group
 
 
 
@@ -23,7 +23,8 @@ class AwsCicdPipelineStack(cdk.Stack):
     def __init__(self, scope: cdk.Construct, construct_id: str, **kwargs) -> None:
         super().__init__(scope, construct_id, **kwargs)
 
-        codeDeploy = get_codedeploy(self)
+        code_deploy_app = get_codedeploy(self)
+        #deployment_group = cd_deployment_group(self, code_deploy_app)
         return
         repo = codecommit.Repository(
             self,
