@@ -23,6 +23,8 @@ class AwsCicdPipelineStack(cdk.Stack):
     def __init__(self, scope: cdk.Construct, construct_id: str, **kwargs) -> None:
         super().__init__(scope, construct_id, **kwargs)
 
+        codeDeploy = get_codedeploy(self)
+        return
         repo = codecommit.Repository(
             self,
             "Repository",
@@ -61,7 +63,6 @@ class AwsCicdPipelineStack(cdk.Stack):
         #     pipeline_tg,
         #     lb_Listner
         # )
-
         ecs_cluster = cluster_fargate(self)
 
         ecs_taskd = task_defination(self, ecr_repo)
@@ -70,7 +71,6 @@ class AwsCicdPipelineStack(cdk.Stack):
 
         codebuild_project = get_cb_project(self, repo, ecr_repo)
 
-        codeDeploy = get_codedeploy(self)
 
         codepipeline.CfnPipeline(self, "CfnPipeline",
                                  role_arn=get_service_role(self).attr_arn,
